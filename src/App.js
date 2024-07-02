@@ -15,37 +15,34 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchDevelopers = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('https://ariyoeyitayo.github.io/host/db.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Raw data received from API:", data);
+        
+        // Check the structure of the data
+        if (data && Array.isArray(data.developers)) {
+          setDevelopers(data.developers);
+          setFilteredDevelopers(data.developers);
+        } else {
+          throw new Error("Data is not in the expected format");
+        }
+      } catch (error) {
+        console.error("Error fetching developers:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
     fetchDevelopers();
   }, []);
-
-  const fetchDevelopers = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("http://localhost:8000/api/developers");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log("Raw data received from API:", data);
-      
-      // Check the structure of the data
-      if (data && Array.isArray(data.data)) {
-        setDevelopers(data.data);
-        setFilteredDevelopers(data.data);
-      } else if (Array.isArray(data)) {
-        // If the data is directly an array without a 'data' property
-        setDevelopers(data);
-        setFilteredDevelopers(data);
-      } else {
-        throw new Error("Data is not in the expected format");
-      }
-    } catch (error) {
-      console.error("Error fetching developers:", error);
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
 
   const handleSearch = (searchTerm) => {
     console.log("Search term:", searchTerm);
@@ -65,7 +62,7 @@ function App() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="App h-[170vh] bg-black">
+    <div className="App bg-black">
       <Routes>
         <Route 
           path="/" 

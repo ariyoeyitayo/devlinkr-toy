@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import DeveloperList from './DeveloperList';
 import ErrorBoundary from './ErrorBoundary';
+import Footer from './Footer'
 
 function Home({ developers, onSearch }) {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Home({ developers, onSearch }) {
   };
 
   return (
-    <div className='h-200vw'>
+    <div className=''>
       <header className="App-header">
         <div><h1 className='text-white p-3 text-[30px] font-medium'>devlinkr.</h1></div>
         <h1 className='text-white text-center font-medium text-[2.5rem]'>meet, learn, connect <br/> and grow in the tech space.</h1>
@@ -31,6 +32,7 @@ function Home({ developers, onSearch }) {
             onSelectDeveloper={handleSelectDeveloper}
           />
         </ErrorBoundary>
+        <Footer />
       </div>
     </div>
   );

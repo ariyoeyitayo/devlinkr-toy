@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../App.css'
+import '../App.css';
 
 function SearchBar({ onSearch, developers }) {
   console.log("SearchBar received developers:", developers);
@@ -27,51 +27,56 @@ function SearchBar({ onSearch, developers }) {
     if (value.length > 0) {
       const nameSuggestions = developers
         .filter(dev => `${dev.firstName} ${dev.lastName}`.toLowerCase().includes(value.toLowerCase()))
-        .map(dev => `${dev.firstName} ${dev.lastName}`);
+        .map(dev => ({ name: `${dev.firstName} ${dev.lastName}`, type: 'name' }));
 
       const statusSuggestions = developers
         .filter(dev => dev.devStatus.toLowerCase().includes(value.toLowerCase()))
-        .map(dev => dev.devStatus);
+        .map(dev => ({ name: dev.devStatus, type: 'status' }));
 
-      setSuggestions([...new Set([...nameSuggestions, ...statusSuggestions])]); // Remove duplicates
+      setSuggestions([...nameSuggestions, ...statusSuggestions]);
     } else {
       setSuggestions([]);
     }
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    setSearchTerm(suggestion);
-    setSuggestions([]);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.error("Search submitted with term:", searchTerm); // Using console.error to ensure it shows up
+  const handleSearch = () => {
     onSearch(searchTerm);
     setSuggestions([]);
   };
 
+  const handleSuggestionClick = (suggestion) => {
+    setSearchTerm(suggestion);
+    handleSearch();
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="search-bar w-[5rem]">
-      <div className="input-wrapper">
-        <input className='w-[6rem] rounded-[50px]' 
-          type="text" 
+    <div className="search-bar flex justify-center p-8">
+      <div className="relative w-full max-w-md">
+        <input
+          type="text"
+          placeholder="Search..."
           value={searchTerm}
           onChange={handleInputChange}
-          placeholder="Search developers..."
+          className="search-input w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
+        <button onClick={handleSearch} className="search-button bg-gray-900 text-white px-4 py-2 rounded ml-2">
+          <i className="fa-solid fa-search"></i>
+        </button>
         {suggestions.length > 0 && (
-          <ul className="suggestions" ref={suggestionsRef}>
+          <ul ref={suggestionsRef} className="suggestions absolute left-0 right-0 bg-white border border-gray-300 rounded mt-2 max-h-40 overflow-y-auto z-10">
             {suggestions.map((suggestion, index) => (
-              <li typeof='sumbit' key={index} onClick={() => handleSuggestionClick(suggestion)}>
-                {suggestion}
+              <li
+                key={index}
+                onClick={() => handleSuggestionClick(suggestion.name)}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+              >
+                {suggestion.name} <span className="text-gray-400 text-sm">({suggestion.type})</span>
               </li>
             ))}
           </ul>
         )}
       </div>
-      <button type="submit" className='bg-white'><i className="fa fa-paper-plane"></i></button>
-    </form>
+    </div>
   );
 }
 
