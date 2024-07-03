@@ -54,7 +54,7 @@ function SearchBar({ onSearch, developers }) {
       <div className="relative w-full max-w-md">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search for a developer..."
           value={searchTerm}
           onChange={handleInputChange}
           className="search-input w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"

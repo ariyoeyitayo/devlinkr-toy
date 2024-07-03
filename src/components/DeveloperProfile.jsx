@@ -1,9 +1,15 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import '../App.css';
 
 function DeveloperProfile({ developers }) {
   const { id } = useParams();
+
+  // Check if developers is an array and not empty
+  if (!Array.isArray(developers) || developers.length === 0) {
+    return <div className="text-white">Loading developers...</div>;
+  }
+
   const developer = developers.find(dev => dev.id === id);
 
   if (!developer) {
@@ -11,7 +17,7 @@ function DeveloperProfile({ developers }) {
   }
 
   return (
-    <div className="developer-profile bg-gray-900 text-white p-6">
+    <div className="developer-profile bg-gray-0 text-gray-700 p-6">
       <div className="flex flex-col md:flex-row items-center border-b border-gray-700 pb-6 mb-6">
         {developer.img && developer.img.url ? (
           <img
@@ -22,10 +28,15 @@ function DeveloperProfile({ developers }) {
         ) : (
           <div className="w-16 h-16 rounded-full mr-4 bg-gray-700"></div>
         )}
-        <div className="text-center md:text-left">
-          <h1 className="text-2xl font-semibold">{developer.firstName} {developer.lastName}</h1>
-          <p className="text-gray-400">{developer.longBio || 'Product Designer'}</p>
-          <p className="text-gray-400">{developer.location}</p>
+        <div className="text-center flex justify-between md:text-left">
+          <div>
+            <h1 className="text-2xl text-gray-800 font-semibold">{developer.firstName} {developer.lastName}</h1>
+            <p className="text-gray-700">{developer.longBio || 'Product Designer'}</p>
+            <p className="text-gray-500">{developer.location}</p>
+          </div>
+          <div>
+            <Link to="/" className='text-[16px] text-black flex'>Home <i className="fa p-1 fa-arrow-right"></i></Link>
+          </div>
         </div>
       </div>
 

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import './fontawesome-free-6.4.2-web/css/all.css';
-import SearchBar from './components/SearchBar';
-import DeveloperList from './components/DeveloperList';
-import DeveloperProfile from './components/DeveloperProfile';
-import ErrorBoundary from './components/ErrorBoundary';
 import Home from './components/Home';
+import DeveloperProfile from './components/DeveloperProfile';
+import Waitlist from './components/Waitlist';
 
 function App() {
   const [developers, setDevelopers] = useState([]);
@@ -23,7 +21,7 @@ function App() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Raw data received from API:", data);
+        console.log("Raw data received from API:", data.developers);
         
         // Check the structure of the data
         if (data && Array.isArray(data.developers)) {
@@ -43,7 +41,6 @@ function App() {
     fetchDevelopers();
   }, []);
   
-
   const handleSearch = (searchTerm) => {
     console.log("Search term:", searchTerm);
     console.log("Developers:", developers);
@@ -51,18 +48,20 @@ function App() {
       console.error("Developers data is not available or is empty");
       return;
     }
+    setIsLoading(true);
     const filtered = developers.filter(dev => 
       `${dev.firstName} ${dev.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dev.devStatus.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredDevelopers(filtered);
+    setIsLoading(false);
   };
 
-  if (isLoading) return <div className='loader text-center justify-center items-center'></div>;
+  if (isLoading) return <div className='loader text-center justify-center items-center'>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="App bg-black">
+    <div className="App">
       <Routes>
         <Route 
           path="/" 
@@ -70,10 +69,12 @@ function App() {
             <Home 
               developers={filteredDevelopers} 
               onSearch={handleSearch} 
+              isLoading={isLoading} // Pass loading state to Home
             />
           } 
         />
         <Route path="/developer/:id" element={<DeveloperProfile developers={developers} />} />
+        <Route path='/waitlist' element={<Waitlist/>} />
       </Routes>
     </div>
   );
